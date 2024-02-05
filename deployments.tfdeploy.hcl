@@ -10,7 +10,7 @@ identity_token "k8s" {
 deployment "development" {
   variables = {
     aws_identity_token_file = identity_token.aws.jwt_filename
-    regions             = ["ap-southeast-4"]
+    regions             = ["ap-southeast-1"]
     role_arn            = "arn:aws:iam::804453558652:role/tfstacks-role"
     vpc_name = "eks-vpc"
     vpc_cidr = "10.0.0.0/16"
