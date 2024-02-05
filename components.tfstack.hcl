@@ -102,6 +102,7 @@ component "k8s-namespace" {
 component "deploy-hashibank" {
   for_each = var.regions
 
+
   source = "./hashibank-deploy"
 
   inputs = {
@@ -110,5 +111,7 @@ component "deploy-hashibank" {
 
   providers = {
     kubernetes  = provider.kubernetes.oidc_configurations[each.value]
+    time = provider.time.this
   }
+
 }
