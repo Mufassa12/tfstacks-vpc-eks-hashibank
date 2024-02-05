@@ -50,42 +50,20 @@ resource "kubernetes_deployment" "hashibank" {
       }
     }
   }
+  wait_for_rollout = false
 }
 
-
-resource "time_sleep" "wait_30_seconds" {
+resource "time_sleep" "wait_60_seconds" {
   depends_on = [kubernetes_deployment.hashibank]
 
-  create_duration = "30s"
+  create_duration = "60s"
   # allow for ingress controller to be ready
-}
-
-
-# hashibank service
-resource "kubernetes_service_v1" "hashibank" {
-  metadata {
-    name      = "hashibank"
-    namespace = var.hashibank_namespace
-  }
-
-  spec {
-    selector = {
-      app = "hashibank"
-    }
-
-    port {
-      protocol    = "TCP"
-      port        = 8080
-      target_port = 8080
-    }
-
-    type = "ClusterIP"
-  }
 }
 
 #hashibank ingress
 resource "kubernetes_ingress_v1" "hashibank" {
-  depends_on = [time_sleep.wait_30_seconds]
+  depends_on = [time_sleep.wait_60_seconds]
+  wait_for_load_balancer = false
   metadata {
     name        = "hashibank"
     namespace = var.hashibank_namespace
@@ -116,5 +94,30 @@ resource "kubernetes_ingress_v1" "hashibank" {
         }
       }
     }
+  }
+}
+
+
+# hashibank service
+resource "kubernetes_service_v1" "hashibank" {
+  depends_on = [time_sleep.wait_60_seconds]
+  wait_for_load_balancer = false
+  metadata {
+    name      = "hashibank"
+    namespace = var.hashibank_namespace
+  }
+
+  spec {
+    selector = {
+      app = "hashibank"
+    }
+
+    port {
+      protocol    = "TCP"
+      port        = 8080
+      target_port = 8080
+    }
+
+    type = "ClusterIP"
   }
 }
