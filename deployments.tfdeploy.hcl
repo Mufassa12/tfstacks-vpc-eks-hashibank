@@ -31,7 +31,7 @@ deployment "development" {
   }
 }
 
-deployment "development" {
+deployment "test" {
   variables = {
     aws_identity_token_file = identity_token.aws.jwt_filename
     regions             = ["ap-southeast-1"]
